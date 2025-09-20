@@ -12,7 +12,6 @@ export const UpdateCampaignRequestSchema = z.object({
   description: z.string().optional(),
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
-  leadId: z.number().optional(),
 });
 
 const LeadCampaignStatusSchema = z.enum([

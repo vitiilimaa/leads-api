@@ -1,4 +1,5 @@
 import { Lead } from "@prisma/client";
+import { CampaignLeadStatus } from "./CampaignsRepository";
 
 export type LeadStatus =
   | "New"
@@ -16,6 +17,9 @@ export interface ILeadWhereParams {
     mode?: "default" | "insensitive";
   };
   status?: LeadStatus;
+  groupId?: number
+  campaignId?: number;
+  campaignLeadStatus?: CampaignLeadStatus
 }
 
 export interface ILeadsFindAllParams {
@@ -24,6 +28,10 @@ export interface ILeadsFindAllParams {
   order?: "asc" | "desc";
   limit?: number;
   offset?: number;
+  include?: {
+    groups?: boolean;
+    campaigns?: boolean;
+  }
 }
 
 export interface ICreateLeadAttributes {

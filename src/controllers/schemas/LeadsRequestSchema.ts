@@ -13,7 +13,7 @@ const LeadStatusSchema = z.enum([
 export const GetLeadsRequestSchema = z.object({
   page: z.string().optional(),
   pageSize: z.string().optional(),
-  sortBy: z.enum(["name", "status"]).optional(),
+  sortBy: z.enum(["name", "status", "createdAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
   name: z.string().optional(),
   status: LeadStatusSchema.optional(),
@@ -30,6 +30,5 @@ export const UpdateLeadRequestSchema = z.object({
   name: z.string().optional(),
   email: z.string().optional(),
   phone: z.string().optional(),
-  groupId: z.number().optional(),
   status: LeadStatusSchema.optional(),
 });

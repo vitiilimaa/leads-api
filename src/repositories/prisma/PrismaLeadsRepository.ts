@@ -1,4 +1,4 @@
-import { Lead } from "@prisma/client";
+import { Lead, Prisma } from "@prisma/client";
 import {
   ICreateLeadAttributes,
   ILeadsFindAllParams,
@@ -9,16 +9,49 @@ import { prisma } from "../../database";
 
 export class PrismaLeadsRepository implements ILeadsRepository {
   async findAll(params: ILeadsFindAllParams): Promise<Lead[]> {
-    const { where, limit, offset, order, sortBy = "createdAt" } = params;
+    const {
+      where,
+      limit,
+      offset,
+      order,
+      sortBy = "createdAt",
+      include,
+    } = params;
 
     const orderBy = { [sortBy]: order };
 
+    let prismaWhere: Prisma.LeadWhereInput = {
+      name: {
+        contains: where?.name?.like,
+        equals: where?.name?.equals,
+        mode: where?.name?.mode,
+      },
+      status: where?.status,
+    };
+
+    if (where?.groupId) {
+      prismaWhere.groups = {
+        some: {
+          id: where.groupId,
+        },
+      };
+    }
+
+    if (where?.campaignId) {
+      prismaWhere.campaigns = {
+        some: {
+          campaignId: where.campaignId,
+          status: where?.campaignLeadStatus,
+        },
+      };
+    }
+
     const leads = await prisma.lead.findMany({
-      include: { campaigns: true, groups: true },
-      where,
+      where: prismaWhere,
       orderBy,
       take: limit,
       skip: offset,
+      include,
     });
 
     return leads;
@@ -32,7 +65,35 @@ export class PrismaLeadsRepository implements ILeadsRepository {
   }
 
   async count(params: ILeadWhereParams): Promise<number> {
-    return prisma.lead.count({ where: params });
+    let where: Prisma.LeadWhereInput = {
+      name: {
+        contains: params?.name?.like,
+        equals: params?.name?.equals,
+        mode: params?.name?.mode,
+      },
+      status: params?.status,
+    };
+
+    if (params?.groupId) {
+      where.groups = {
+        some: {
+          id: params.groupId,
+        },
+      };
+    }
+
+    if (params?.campaignId) {
+      where.campaigns = {
+        some: {
+          campaignId: params.campaignId,
+          status: params?.campaignLeadStatus,
+        },
+      };
+    }
+
+    return prisma.lead.count({
+      where,
+    });
   }
 
   async create(attributes: ICreateLeadAttributes): Promise<Lead> {
