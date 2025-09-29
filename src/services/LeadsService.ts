@@ -1,4 +1,4 @@
-import { Lead } from "@prisma/client";
+import { CampaignLeadStatus, Lead } from "@prisma/client";
 import {
   ICreateLeadAttributes,
   ILeadsRepository,
@@ -14,6 +14,9 @@ export interface ILeadsFindAllParams {
   status?: LeadStatus;
   sortBy?: "name" | "status" | "createdAt";
   order?: "asc" | "desc";
+  groupId?: number;
+  campaignId?: number;
+  campaignLeadStatus?: CampaignLeadStatus;
 }
 
 export class LeadsService {
@@ -25,11 +28,25 @@ export class LeadsService {
   }
 
   async findAll(params: ILeadsFindAllParams) {
-    const { page = 1, pageSize = 10, sortBy, order, name, status } = params;
+    const {
+      page = 1,
+      pageSize = 10,
+      sortBy,
+      order,
+      name,
+      status,
+      groupId,
+      campaignId,
+      campaignLeadStatus,
+    } = params;
     const limit = pageSize;
     const offset = (page - 1) * limit;
 
     const where: ILeadWhereParams = {};
+
+    if (groupId) where.groupId = groupId;
+    if (campaignId) where.campaignId = campaignId;
+    if (campaignLeadStatus) where.campaignLeadStatus = campaignLeadStatus;
     if (name) where.name = { like: name, mode: "insensitive" };
     if (status) where.status = status;
 

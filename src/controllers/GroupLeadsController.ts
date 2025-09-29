@@ -1,26 +1,21 @@
 import { Handler } from "express";
 import { AddLeadRequestSchema } from "./schemas/GroupsRequestSchema";
 import { GetLeadsRequestSchema } from "./schemas/LeadsRequestSchema";
-import {
-  ILeadsRepository,
-  ILeadWhereParams,
-} from "../repositories/LeadsRepository";
-import { IGroupsRepository } from "../repositories/GroupsRepository";
+import { GroupsService } from "../services/GroupsService";
+import { LeadsService } from "../services/LeadsService";
 
 export class GroupLeadsController {
-  private readonly groupsRepository: IGroupsRepository;
-  private readonly leadsRepository: ILeadsRepository;
+  private readonly groupsService: GroupsService;
+  private readonly leadsService: LeadsService;
 
-  constructor(
-    groupsRepository: IGroupsRepository,
-    leadsRepository: ILeadsRepository
-  ) {
-    this.groupsRepository = groupsRepository;
-    this.leadsRepository = leadsRepository;
+  constructor(groupsService: GroupsService, leadsService: LeadsService) {
+    this.groupsService = groupsService;
+    this.leadsService = leadsService;
   }
 
   getLeads: Handler = async (req, res, next) => {
     try {
+      const groupId = +req.params.groupId;
       const query = GetLeadsRequestSchema.parse(req.query);
       const {
         page = "1",
@@ -31,38 +26,17 @@ export class GroupLeadsController {
         status,
       } = query;
 
-      const pageNumber = +page;
-      const limit = +pageSize;
-      const offset = (pageNumber - 1) * limit;
-
-      const where: ILeadWhereParams = {
-        groupId: +req.params.groupId,
-      };
-
-      if (name) where.name = { like: name, mode: "insensitive" };
-      if (status) where.status = status;
-
-      const result = await this.leadsRepository.findAll({
-        where,
+      const result = await this.leadsService.findAll({
+        page: +page,
+        pageSize: +pageSize,
         sortBy,
         order,
-        limit,
-        offset,
-        include: { groups: true },
+        groupId,
+        name,
+        status,
       });
 
-      const count = await this.leadsRepository.count(where);
-      const totalPages = Math.ceil(count / limit);
-
-      res.json({
-        data: result,
-        pagination: {
-          page: pageNumber,
-          pageSize: limit,
-          count,
-          totalPages,
-        },
-      });
+      res.json(result);
     } catch (error) {
       next(error);
     }
@@ -74,9 +48,11 @@ export class GroupLeadsController {
       const groupId = +req.params.groupId;
       const leadId = body.leadId;
 
-      const lead = await this.groupsRepository.addLead(groupId, leadId);
+      await this.groupsService.addLead(groupId, leadId);
 
-      res.status(201).json(lead);
+      res
+        .status(201)
+        .json({ message: "Lead adicionado no grupo com sucesso!" });
     } catch (error) {
       next(error);
     }
@@ -87,12 +63,9 @@ export class GroupLeadsController {
       const groupId = +req.params.groupId;
       const leadId = +req.params.leadId;
 
-      const deletedLead = await this.groupsRepository.removeLead(
-        groupId,
-        leadId
-      );
+      await this.groupsService.removeLead(groupId, leadId);
 
-      res.json(deletedLead);
+      res.json({ message: "Lead removido do grupo com sucesso!" });
     } catch (error) {
       next(error);
     }

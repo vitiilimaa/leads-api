@@ -1,5 +1,6 @@
-import { Campaign, Group } from "@prisma/client";
+import { Campaign } from "@prisma/client";
 import {
+  IAddLeadToCampaignAttributes,
   ICampaignsRepository,
   ICreateCampaignAttributes,
 } from "../repositories/CampaignsRepository";
@@ -35,13 +36,29 @@ export class CampaignsService {
       id,
       attributes
     );
-    if (!updatedCampaign) throw new HttpError(404, this.campaignNotFoundMessage);
+    if (!updatedCampaign)
+      throw new HttpError(404, this.campaignNotFoundMessage);
     return updatedCampaign;
   }
 
   async deleteById(id: number): Promise<{ deletedCampaign: Campaign } | null> {
     const deletedCampaign = await this.campaignRepository.deleteById(id);
-    if (!deletedCampaign) throw new HttpError(404, this.campaignNotFoundMessage);
+    if (!deletedCampaign)
+      throw new HttpError(404, this.campaignNotFoundMessage);
     return { deletedCampaign };
+  }
+
+  async addLead(attributes: IAddLeadToCampaignAttributes): Promise<void> {
+    return await this.campaignRepository.addLead(attributes);
+  }
+
+  async updateLeadStatus(
+    attributes: IAddLeadToCampaignAttributes
+  ): Promise<void> {
+    return await this.campaignRepository.updateLeadStatus(attributes);
+  }
+
+  async removeLead(campaignId: number, leadId: number): Promise<void> {
+    return await this.campaignRepository.removeLead(campaignId, leadId);
   }
 }

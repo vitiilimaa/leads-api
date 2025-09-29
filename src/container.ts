@@ -12,23 +12,23 @@ import { GroupLeadsController } from "./controllers/GroupLeadsController";
 import { GroupsController } from "./controllers/GroupsController";
 import { CampaignsService } from "./services/CampaignsService";
 
-const leadsRepository = new LeadsRepository();
-const leadsService = new LeadsService(leadsRepository);
+export const leadsRepository = new LeadsRepository();
+export const leadsService = new LeadsService(leadsRepository);
 export const leadsController = new LeadsController(leadsService);
 
-const groupsRepository = new GroupsRepository();
-const groupsService = new GroupsService(groupsRepository);
+export const groupsRepository = new GroupsRepository();
+export const groupsService = new GroupsService(groupsRepository);
 export const groupsController = new GroupsController(groupsService);
 
-const campaignsRepository = new CampaignsRepository();
-const campaignService = new CampaignsService(campaignsRepository);
-export const campaignsController = new CampaignsController(campaignService);
+export const campaignsRepository = new CampaignsRepository();
+export const campaignsService = new CampaignsService(campaignsRepository);
+export const campaignsController = new CampaignsController(campaignsService);
 
 export const groupLeadsController = new GroupLeadsController(
-  groupsRepository,
-  leadsRepository
+  groupsService,
+  leadsService
 );
 export const campaignLeadsController = new CampaignLeadsController(
-  campaignsRepository,
-  leadsRepository
+  campaignsService,
+  leadsService
 );

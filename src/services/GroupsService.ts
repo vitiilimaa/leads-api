@@ -41,4 +41,12 @@ export class GroupsService {
     if (!deletedGroup) throw new HttpError(404, this.groupNotFoundMessage);
     return { deletedGroup };
   }
+
+  async addLead(groupId: number, leadId: number): Promise<Group | null> {
+    return await this.groupsRepository.addLead(groupId, leadId);
+  }
+
+  async removeLead(groupId: number, leadId: number): Promise<Group | null> {
+    return await this.groupsRepository.removeLead(groupId, leadId);
+  }
 }

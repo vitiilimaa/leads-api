@@ -1,5 +1,4 @@
 import { Handler } from "express";
-import { HttpError } from "../errors/HttpError";
 import {
   CreateCampaignRequestSchema,
   UpdateCampaignRequestSchema,
