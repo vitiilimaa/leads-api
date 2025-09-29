@@ -1,4 +1,3 @@
-
 import { LeadsRepository } from "./repositories/LeadsRepository";
 import { LeadsService } from "./services/LeadsService";
 import { LeadsController } from "./controllers/LeadsController";
@@ -11,6 +10,7 @@ import { GroupsRepository } from "./repositories/GroupsRepository";
 import { GroupsService } from "./services/GroupsService";
 import { GroupLeadsController } from "./controllers/GroupLeadsController";
 import { GroupsController } from "./controllers/GroupsController";
+import { CampaignsService } from "./services/CampaignsService";
 
 const leadsRepository = new LeadsRepository();
 const leadsService = new LeadsService(leadsRepository);
@@ -21,7 +21,8 @@ const groupsService = new GroupsService(groupsRepository);
 export const groupsController = new GroupsController(groupsService);
 
 const campaignsRepository = new CampaignsRepository();
-export const campaignsController = new CampaignsController(campaignsRepository);
+const campaignService = new CampaignsService(campaignsRepository);
+export const campaignsController = new CampaignsController(campaignService);
 
 export const groupLeadsController = new GroupLeadsController(
   groupsRepository,

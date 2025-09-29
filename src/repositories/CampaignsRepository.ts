@@ -41,6 +41,9 @@ export interface ICampaignsRepository {
 }
 
 export class CampaignsRepository implements ICampaignsRepository {
+  private readonly genericErrorMessage =
+    "Erro encontrado no repositório CampaignsRepository:";
+
   async findAll(): Promise<Campaign[]> {
     return await prisma.campaign.findMany();
   }
@@ -64,15 +67,23 @@ export class CampaignsRepository implements ICampaignsRepository {
     id: number,
     attributes: Partial<ICreateCampaignAttributes>
   ): Promise<Campaign | null> {
-    const campaignExists = await prisma.campaign.findUnique({ where: { id } });
-    if (!campaignExists) return null;
-    return await prisma.campaign.update({ data: attributes, where: { id } });
+    try {
+      return await prisma.campaign.update({ data: attributes, where: { id } });
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.log(this.genericErrorMessage, error.message);
+      return null;
+    }
   }
 
   async deleteById(id: number): Promise<Campaign | null> {
-    const campaignExists = await prisma.campaign.findUnique({ where: { id } });
-    if (!campaignExists) return null;
-    return await prisma.campaign.delete({ where: { id } });
+    try {
+      return await prisma.campaign.delete({ where: { id } });
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.log(this.genericErrorMessage, error.message);
+      return null;
+    }
   }
 
   async addLead(attributes: IAddLeadToCampaignAttributes): Promise<void> {

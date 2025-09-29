@@ -74,7 +74,11 @@ export class LeadsService {
 
     if (!lead) throw new HttpError(404, this.leadNotFoundMessage);
 
-    if (lead.status === "New" && attributes.status !== "Contacted")
+    if (
+      attributes.status &&
+      lead.status === "New" &&
+      attributes.status !== "Contacted"
+    )
       throw new HttpError(
         400,
         "O lead precisa ser contatado antes de ter seu status atualizado para outro valor."
@@ -96,9 +100,9 @@ export class LeadsService {
     return updatedLead;
   }
 
-  async deleteById(id: number): Promise<Lead | null> {
+  async deleteById(id: number): Promise<{ deletedLead: Lead } | null> {
     const deletedLead = await this.leadsRepository.deleteById(id);
     if (!deletedLead) throw new HttpError(404, this.leadNotFoundMessage);
-    return deletedLead;
+    return { deletedLead };
   }
 }

@@ -20,6 +20,9 @@ export interface IGroupsRepository {
 }
 
 export class GroupsRepository implements IGroupsRepository {
+  private readonly genericErrorMessage =
+    "Erro encontrado no repositório GroupsRepository:";
+
   async findAll(): Promise<Group[]> {
     return await prisma.group.findMany();
   }
@@ -39,18 +42,26 @@ export class GroupsRepository implements IGroupsRepository {
     id: number,
     attributes: Partial<ICreateGroupAttributes>
   ): Promise<Group | null> {
-    const groupExists = await prisma.group.findUnique({ where: { id } });
-    if (!groupExists) return null;
-    return await prisma.group.update({
-      where: { id },
-      data: attributes,
-    });
+    try {
+      return await prisma.group.update({
+        where: { id },
+        data: attributes,
+      });
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.log(this.genericErrorMessage, error.message);
+      return null;
+    }
   }
 
   async deleteById(id: number): Promise<Group | null> {
-    const groupExists = await prisma.group.findUnique({ where: { id } });
-    if (!groupExists) return null;
-    return await prisma.group.delete({ where: { id } });
+    try {
+      return await prisma.group.delete({ where: { id } });
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.log(this.genericErrorMessage, error.message);
+      return null;
+    }
   }
 
   async addLead(groupId: number, leadId: number): Promise<Group | null> {

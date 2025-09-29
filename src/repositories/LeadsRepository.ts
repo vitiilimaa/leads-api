@@ -55,6 +55,9 @@ export interface ILeadsRepository {
 }
 
 export class LeadsRepository implements ILeadsRepository {
+  private readonly genericErrorMessage =
+    "Erro encontrado no repositório LeadsRepository:";
+
   async findAll(params: ILeadsFindAllParams): Promise<Lead[]> {
     const {
       where,
@@ -151,10 +154,24 @@ export class LeadsRepository implements ILeadsRepository {
     id: number,
     attributes: Partial<ICreateLeadAttributes>
   ): Promise<Lead | null> {
-    return await prisma.lead.update({ where: { id }, data: attributes });
+    try {
+      return await prisma.lead.update({ where: { id }, data: attributes });
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.log(this.genericErrorMessage, error.message);
+      return null;
+    }
   }
 
   async deleteById(id: number): Promise<Lead | null> {
-    return await prisma.lead.delete({ where: { id } });
+    const leadExists = await prisma.lead.findUnique({ where: { id } });
+    if (!leadExists) return null;
+    try {
+      return await prisma.lead.delete({ where: { id } });
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.log(this.genericErrorMessage, error.message);
+      return null;
+    }
   }
 }

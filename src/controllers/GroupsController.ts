@@ -1,5 +1,4 @@
 import { Handler } from "express";
-import { HttpError } from "../errors/HttpError";
 import {
   CreateGroupRequestSchema,
   UpdateGroupRequestSchema,
@@ -35,7 +34,6 @@ export class GroupsController {
   getById: Handler = async (req, res, next) => {
     try {
       const group = await this.groupsService.findById(+req.params.id);
-      if (!group) throw new HttpError(404, "Grupo não encontrado!");
       res.json(group);
     } catch (error) {
       next(error);
@@ -47,7 +45,6 @@ export class GroupsController {
       const id = +req.params.id;
       const body = UpdateGroupRequestSchema.parse(req.body);
       const updatedGroup = await this.groupsService.updateById(id, body);
-      if (!updatedGroup) throw new HttpError(404, "Grupo não encontrado!");
       res.json(updatedGroup);
     } catch (error) {
       next(error);
@@ -58,7 +55,6 @@ export class GroupsController {
     try {
       const id = +req.params.id;
       const deletedGroup = await this.groupsService.deleteById(id);
-      if (!deletedGroup) throw new HttpError(404, "Grupo não encontrado!");
       res.json(deletedGroup);
     } catch (error) {
       next(error);

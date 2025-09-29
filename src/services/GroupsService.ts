@@ -31,14 +31,14 @@ export class GroupsService {
     id: number,
     attributes: Partial<ICreateGroupAttributes>
   ): Promise<Group | null> {
-    const groupExists = await this.groupsRepository.updateById(id, attributes);
-    if (!groupExists) throw new HttpError(404, this.groupNotFoundMessage);
-    return groupExists;
+    const updatedGroup = await this.groupsRepository.updateById(id, attributes);
+    if (!updatedGroup) throw new HttpError(404, this.groupNotFoundMessage);
+    return updatedGroup;
   }
 
-  async deleteById(id: number): Promise<Group | null> {
+  async deleteById(id: number): Promise<{ deletedGroup: Group } | null> {
     const deletedGroup = await this.groupsRepository.deleteById(id);
     if (!deletedGroup) throw new HttpError(404, this.groupNotFoundMessage);
-    return deletedGroup;
+    return { deletedGroup };
   }
 }
