@@ -11,38 +11,35 @@ Inclui recursos de:
 ## 🗂️ Modelos
 ![Diagrama](https://github.com/user-attachments/assets/3f103b7f-55fb-4ce4-a831-eba5307c9c71)
 
-### **Groups**
+### **Group**
 - `id` (int, PK)  
 - `name` (string, único)  
 - `description` (string, opcional)  
 
-### **Leads**
+### **Lead**
 - `id` (int, PK)  
 - `name` (string)  
 - `email` (string, único)  
 - `phone` (string, opcional)  
-- `status` (enum: `Novo`, `Contatado`, `Qualificado`, `Convertido`)  
+- `status` (enum: `New`, `Contacted`, `Qualified`, `Converted`, `Unresponsive`, `Disqualified`, `Archived`)    
 
-### **Campaigns**
+### **Campaign**
 - `id` (int, PK)  
 - `name` (string)  
 - `description` (string, opcional)  
 - `startDate` (DateTime)  
 - `endDate` (DateTime, opcional)  
 
-### **CampaignLeads** (tabela de junção Leads ↔ Campaigns)
-- `leadId` (int, FK → Leads)  
-- `campaignId` (int, FK → Campaigns)  
-- `status` (enum: `Interessado`, `Não Interessado`, `Em Andamento`)  
+### **GroupLead** (tabela de junção Leads ↔ Group)
+- `group_id` (int, PK,  FK → Group)  
+- `lead_id` (int, PK, FK → Lead)  
 
+### **CampaignLead** (tabela de junção Lead ↔ Campaign)
+- `leadId` (int, PK, FK → Leads)  
+- `campaignId` (int, PK, FK → Campaigns)  
+- `status` (enum: `New`, `Não Engaged`, `FollowUp_Scheduled`, `Contacted`, `Qualified`, `Converted`, `Unresponsive`, `Disqualified`, `Re_Engaged`, `Opted_Out`)   
+  
 ## 🚀 Endpoints da API
-
-### **Grupos**
-- `GET /groups` → Lista grupos (filtros: `name`, paginação)  
-- `GET /groups/:id` → Retorna grupo por ID  
-- `POST /groups` → Cria novo grupo  
-- `PUT /groups/:id` → Atualiza grupo existente  
-- `DELETE /groups/:id` → Remove grupo  
 
 ### **Leads**
 - `GET /leads` → Lista leads (filtros: `name`, `status`, ordenação, paginação)  
@@ -50,12 +47,26 @@ Inclui recursos de:
 - `POST /leads` → Cria novo lead (associações com grupos/campanhas opcionais)  
 - `PUT /leads/:id` → Atualiza lead existente  
 - `DELETE /leads/:id` → Remove lead  
-- `GET /groups/:id/leads` → Lista leads de um grupo específico (filtros e paginação)  
+
+### **Grupos**
+- `GET /groups` → Lista grupos  
+- `GET /groups/:id` → Retorna grupo por ID  
+- `POST /groups` → Cria novo grupo  
+- `PUT /groups/:id` → Atualiza grupo existente  
+- `DELETE /groups/:id` → Remove grupo  
+- `GET /groups/:groupId/leads` → Lista leads de um grupo específico (filtros e paginação)  
+- `POST /groups/:groupId/leads/:leadId` → Adiciona lead ao grupo  
+- `DELETE /groups/:groupId/leads/:leadId` → Remove lead do grupo  
 
 ### **Campanhas**
-- `GET /campaigns` → Lista campanhas (filtros: `name`, `startDate`, ordenação, paginação)  
+- `GET /campaigns` → Lista campanhas 
 - `GET /campaigns/:id` → Retorna campanha por ID  
-- `POST /campaigns` → Cria nova campanha  
+- `POST /campaigns` → Cria nova campanha
+- `PUT /campaigns/:id` → Atualiza campanha existente  
+- `DELETE /campaigns/:id` → Remove campanha  
+- `GET /campaigns/:campaignId/leads` → Lista leads de uma campanha específica (filtros e paginação)
+- `POST /groups/:groupId/leads/:leadId` → Adiciona lead à campanha  
+- `DELETE /groups/:groupId/leads/:leadId` → Remove lead da campanha  
 
 ## 📦 Exemplos de Requisição
 
@@ -75,9 +86,6 @@ POST /leads
   "name": "João Silva",
   "email": "joao.silva@exemplo.com",
   "phone": "123-456-7890",
-  "status": "New",
-  "groups": ["grupo-uuid"],
-  "campaigns": ["campanha-uuid"]
 }
 ```
 
@@ -103,4 +111,4 @@ POST /campaigns
 
 ### 📌 Status do Projeto
 
-Em desenvolvimento.
+Finalizado.
