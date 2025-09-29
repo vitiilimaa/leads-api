@@ -1,26 +1,32 @@
+
+import { LeadsRepository } from "./repositories/LeadsRepository";
+import { LeadsService } from "./services/LeadsService";
 import { LeadsController } from "./controllers/LeadsController";
-import { GroupsController } from "./controllers/GroupsController";
+
+import { CampaignsRepository } from "./repositories/CampaignsRepository";
 import { CampaignsController } from "./controllers/CampaignsController";
 import { CampaignLeadsController } from "./controllers/CampaignLeadsController";
+
+import { GroupsRepository } from "./repositories/GroupsRepository";
+import { GroupsService } from "./services/GroupsService";
 import { GroupLeadsController } from "./controllers/GroupLeadsController";
-import { PrismaLeadsRepository } from "./repositories/prisma/PrismaLeadsRepository";
-import { PrismaGroupsRepository } from "./repositories/prisma/PrismaGroupsRepository";
-import { PrismaCampaignsRepository } from "./repositories/prisma/PrismaCampaignsRepository";
-import { LeadsService } from "./services/LeadsService";
+import { GroupsController } from "./controllers/GroupsController";
 
-const leadsRepository = new PrismaLeadsRepository();
-const groupsRepository = new PrismaGroupsRepository();
-const campaignsRepository = new PrismaCampaignsRepository();
-
+const leadsRepository = new LeadsRepository();
 const leadsService = new LeadsService(leadsRepository);
-
 export const leadsController = new LeadsController(leadsService);
-export const groupsController = new GroupsController(groupsRepository);
+
+const groupsRepository = new GroupsRepository();
+const groupsService = new GroupsService(groupsRepository);
+export const groupsController = new GroupsController(groupsService);
+
+const campaignsRepository = new CampaignsRepository();
+export const campaignsController = new CampaignsController(campaignsRepository);
+
 export const groupLeadsController = new GroupLeadsController(
   groupsRepository,
   leadsRepository
 );
-export const campaignsController = new CampaignsController(campaignsRepository);
 export const campaignLeadsController = new CampaignLeadsController(
   campaignsRepository,
   leadsRepository

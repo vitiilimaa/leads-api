@@ -18,6 +18,7 @@ export interface ILeadsFindAllParams {
 
 export class LeadsService {
   private readonly leadsRepository: ILeadsRepository;
+  private readonly leadNotFoundMessage: string = "Lead não encontrado.";
 
   constructor(leadsRepository: ILeadsRepository) {
     this.leadsRepository = leadsRepository;
@@ -61,7 +62,7 @@ export class LeadsService {
 
   async findById(id: number): Promise<Lead | null> {
     const lead = await this.leadsRepository.findById(id);
-    if (!lead) throw new HttpError(404, "Lead não encontrado!");
+    if (!lead) throw new HttpError(404, this.leadNotFoundMessage);
     return lead;
   }
 
@@ -71,7 +72,7 @@ export class LeadsService {
   ): Promise<Lead | null> {
     const lead = await this.leadsRepository.findById(id);
 
-    if (!lead) throw new HttpError(404, "Lead não encontrado");
+    if (!lead) throw new HttpError(404, this.leadNotFoundMessage);
 
     if (lead.status === "New" && attributes.status !== "Contacted")
       throw new HttpError(
@@ -97,7 +98,7 @@ export class LeadsService {
 
   async deleteById(id: number): Promise<Lead | null> {
     const deletedLead = await this.leadsRepository.deleteById(id);
-    if (!deletedLead) throw new HttpError(404, "Lead não encontrado!");
+    if (!deletedLead) throw new HttpError(404, this.leadNotFoundMessage);
     return deletedLead;
   }
 }

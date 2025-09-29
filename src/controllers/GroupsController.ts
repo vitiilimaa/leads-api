@@ -4,18 +4,18 @@ import {
   CreateGroupRequestSchema,
   UpdateGroupRequestSchema,
 } from "./schemas/GroupsRequestSchema";
-import { IGroupsRepository } from "../repositories/GroupsRepository";
+import { GroupsService } from "../services/GroupsService";
 
 export class GroupsController {
-  private readonly groupsRepository: IGroupsRepository;
+  private readonly groupsService: GroupsService;
 
-  constructor(groupsRepository: IGroupsRepository) {
-    this.groupsRepository = groupsRepository;
+  constructor(groupsService: GroupsService) {
+    this.groupsService = groupsService;
   }
 
   getAll: Handler = async (req, res, next) => {
     try {
-      const groups = await this.groupsRepository.findAll();
+      const groups = await this.groupsService.findAll();
       res.json(groups);
     } catch (error) {
       next(error);
@@ -25,7 +25,7 @@ export class GroupsController {
   create: Handler = async (req, res, next) => {
     try {
       const body = CreateGroupRequestSchema.parse(req.body);
-      const group = await this.groupsRepository.create(body);
+      const group = await this.groupsService.create(body);
       res.status(201).json(group);
     } catch (error) {
       next(error);
@@ -34,7 +34,7 @@ export class GroupsController {
 
   getById: Handler = async (req, res, next) => {
     try {
-      const group = await this.groupsRepository.findById(+req.params.id);
+      const group = await this.groupsService.findById(+req.params.id);
       if (!group) throw new HttpError(404, "Grupo não encontrado!");
       res.json(group);
     } catch (error) {
@@ -46,7 +46,7 @@ export class GroupsController {
     try {
       const id = +req.params.id;
       const body = UpdateGroupRequestSchema.parse(req.body);
-      const updatedGroup = await this.groupsRepository.updateById(id, body);
+      const updatedGroup = await this.groupsService.updateById(id, body);
       if (!updatedGroup) throw new HttpError(404, "Grupo não encontrado!");
       res.json(updatedGroup);
     } catch (error) {
@@ -57,7 +57,7 @@ export class GroupsController {
   deleteById: Handler = async (req, res, next) => {
     try {
       const id = +req.params.id;
-      const deletedGroup = await this.groupsRepository.deleteById(id);
+      const deletedGroup = await this.groupsService.deleteById(id);
       if (!deletedGroup) throw new HttpError(404, "Grupo não encontrado!");
       res.json(deletedGroup);
     } catch (error) {
