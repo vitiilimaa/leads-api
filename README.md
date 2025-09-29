@@ -30,13 +30,13 @@ Inclui recursos de:
 - `startDate` (DateTime)  
 - `endDate` (DateTime, opcional)  
 
-### **GroupLead** (tabela de junção Leads ↔ Group)
+### **GroupLead** (tabela de junção Lead ↔ Group)
 - `group_id` (int, PK,  FK → Group)  
 - `lead_id` (int, PK, FK → Lead)  
 
 ### **CampaignLead** (tabela de junção Lead ↔ Campaign)
-- `leadId` (int, PK, FK → Leads)  
-- `campaignId` (int, PK, FK → Campaigns)  
+- `leadId` (int, PK, FK → Lead)  
+- `campaignId` (int, PK, FK → Campaign)  
 - `status` (enum: `New`, `Não Engaged`, `FollowUp_Scheduled`, `Contacted`, `Qualified`, `Converted`, `Unresponsive`, `Disqualified`, `Re_Engaged`, `Opted_Out`)   
   
 ## 🚀 Endpoints da API
@@ -65,8 +65,8 @@ Inclui recursos de:
 - `PUT /campaigns/:id` → Atualiza campanha existente  
 - `DELETE /campaigns/:id` → Remove campanha  
 - `GET /campaigns/:campaignId/leads` → Lista leads de uma campanha específica (filtros e paginação)
-- `POST /groups/:groupId/leads/:leadId` → Adiciona lead à campanha  
-- `DELETE /groups/:groupId/leads/:leadId` → Remove lead da campanha  
+- `POST /campaigns/:campaignId/leads/:leadId` → Adiciona lead à campanha  
+- `DELETE /campaigns/:campaignId/leads/:leadId` → Remove lead da campanha  
 
 ## 📦 Exemplos de Requisição
 
